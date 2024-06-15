@@ -1,0 +1,9 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev
+  application:
+    name: biz
+gg-ws:
+  service-url: receive http://127.0.0.1:8083

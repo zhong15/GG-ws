@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+  application:
+    name: connect
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    password:
+gg-ws:
+  service-url: receive http://127.0.0.1:8083

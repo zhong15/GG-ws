@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright 2024 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 测试</title>
+</head>
+<script>
+    let ws = null
+    function openWs() {
+        console.log("openWs")
+        closeWs()
+
+        let port = document.getElementById("port").value;
+        if(port==null){
+            return;
+        }
+
+        let auth = document.getElementById("auth").value;
+        if(auth==null){
+            return;
+        }
+
+        ws = new WebSocket("ws://localhost:"+port+"/ws?auth="+auth)
+        ws.onopen = function (){
+            console.log("onopen")
+            // ws.send("hey man")
+        }
+        ws.onmessage = function (message) {
+            console.log("onmessage")
+            console.log(message.data)
+            if(message.data==null){
+                document.getElementById("responseMessage").innerHTML = ""
+                return;
+            }
+            let responseMsg = "";
+            JSON.parse(message.data)
+                .forEach((el,i,x) => responseMsg += el.content + "<br/>")
+            document.getElementById("responseMessage").innerHTML = responseMsg
+        }
+    }
+    function sendMessage(){
+        console.log("sendMessage")
+        if (ws == null) {
+            return
+        }
+        ws.send(document.getElementById("message").value)
+        document.getElementById("message").value = ""
+    }
+    function closeWs() {
+        console.log("closeWs")
+        if (ws == null) {
+            return
+        }
+        ws.close()
+    }
+</script>
+<body>
+    <h1>WebSocket 客户端</h1>
+    <label>端口:<input id="port"/></label></p>
+    <label>auth（aa/bb/cc/dd/ee）:<input id="auth"/></label></p>
+    <label>消息:<input id="message"/></label></p>
+    <button id="openBtn" onclick="openWs()">Open</button>
+    <button id="closeBtn" onclick="closeWs()">Close</button>
+    <button id="sendBtn" onclick="sendMessage()">发送</button>
+    <p style="border: 1px solid black;width: 400px; height: 200px" id="responseMessage"></p>
+</body>
+</html>

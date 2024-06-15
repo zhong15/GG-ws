@@ -1,0 +1,22 @@
+server:
+  port: 8083
+spring:
+  profiles:
+    active: dev
+  application:
+    name: receive
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    password:
+  data:
+    cassandra:
+      contact-points: 127.0.0.1
+      port: 9042
+      keyspace-name: test
+      username: test
+      password: 123456
+      local-datacenter: datacenter1
+gg-ws:
+  service-url:
