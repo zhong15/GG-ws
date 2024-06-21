@@ -23,16 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
-
 /**
  * @author Zhong
  * @since 0.0.1
  */
 @RequestMapping("/")
 @RestController
-public class PushController {
-    private static final Logger log = LoggerFactory.getLogger(PushController.class);
+public class ConnectController {
+    private static final Logger log = LoggerFactory.getLogger(ConnectController.class);
 
     @Autowired
     private WsPush wsPush;
