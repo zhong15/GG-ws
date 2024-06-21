@@ -23,6 +23,8 @@ import org.springframework.web.socket.WebSocketSession;
  * @since 0.0.1
  */
 public interface WsContext {
+    void refresh();
+
     void set(Long userId, WebSocketSession session);
 
     void remove(Long userId);
