@@ -92,7 +92,6 @@ public class WsHandler extends //AbstractWebSocketHandler
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("afterConnectionClosed sid: {}", session.getId());
-        super.afterConnectionClosed(session, status);
 
         long userId = (long) session.getAttributes().get(WsInterceptor.ATTR_KEY_USER_ID);
         wsContext.remove(userId);
