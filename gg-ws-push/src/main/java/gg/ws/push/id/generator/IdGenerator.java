@@ -17,11 +17,26 @@
 package gg.ws.push.id.generator;
 
 /**
+ * ID生成器
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface IdGenerator {
+    /**
+     * 获取下一个可用ID
+     *
+     * @param table 表名
+     * @return 下一个可用ID
+     */
     Long nextId(String table);
 
+    /**
+     * 批量获取连续的可用ID
+     *
+     * @param table 表名
+     * @param delta 获取个数
+     * @return 最小的可用ID
+     */
     Long nextId(String table, int delta);
 }

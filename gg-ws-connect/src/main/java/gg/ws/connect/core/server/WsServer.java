@@ -17,11 +17,19 @@
 package gg.ws.connect.core.server;
 
 /**
+ * WebSocket服务器
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface WsServer extends WsContext {
+    /**
+     * 服务器启动
+     */
     void init();
 
+    /**
+     * 服务器关闭
+     */
     void destroy();
 }

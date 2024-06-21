@@ -17,9 +17,18 @@
 package gg.ws.connect.core.server;
 
 /**
+ * 推送接口
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface WsPush {
+    /**
+     * 推送消息给用户
+     *
+     * @param userId  用户ID
+     * @param message 消息
+     * @return 0 成功，1 失败，2 连接已关闭
+     */
     Integer push(Long userId, String message);
 }

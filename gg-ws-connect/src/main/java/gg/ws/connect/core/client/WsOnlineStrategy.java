@@ -19,9 +19,17 @@ package gg.ws.connect.core.client;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
+ * 上线策略
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface WsOnlineStrategy {
+    /**
+     * 处理上线的连接
+     *
+     * @param userId  用户ID
+     * @param session 连接
+     */
     void handleWsOnline(Long userId, WebSocketSession session);
 }

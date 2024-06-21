@@ -19,17 +19,42 @@ package gg.ws.connect.core.server;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
+ * WebSocket连接上下文
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface WsContext {
+    /**
+     * 刷新连接
+     */
     void refresh();
 
+    /**
+     * 添加连接
+     *
+     * @param userId  用户ID
+     * @param session 连接
+     */
     void set(Long userId, WebSocketSession session);
 
+    /**
+     * 删除连接
+     *
+     * @param userId 用户ID
+     * @return 删除的连接
+     */
     WebSocketSession remove(Long userId);
 
+    /**
+     * 关闭并删除连接
+     *
+     * @param userId 用户ID
+     */
     void offline(Long userId);
 
+    /**
+     * 删除所有连接
+     */
     void clear();
 }

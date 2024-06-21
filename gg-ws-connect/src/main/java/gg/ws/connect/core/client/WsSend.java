@@ -17,9 +17,18 @@
 package gg.ws.connect.core.client;
 
 /**
+ * 发送消息到服务端
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface WsSend {
+    /**
+     * 发送消息到服务端
+     *
+     * @param userId  用户ID
+     * @param message 消息
+     * @return 服务端返回的消息
+     */
     String send(Long userId, String message);
 }

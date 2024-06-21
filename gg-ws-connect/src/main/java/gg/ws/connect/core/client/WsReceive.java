@@ -21,11 +21,26 @@ import gg.ws.common.message.model.Message;
 import java.util.List;
 
 /**
+ * 处理未读消息
+ *
  * @author Zhong
  * @since 0.0.1
  */
 public interface WsReceive {
+    /**
+     * 查询未读消息
+     *
+     * @param userId 用户ID
+     * @return 离线未读消息
+     */
     List<Message> receive(Long userId);
 
+    /**
+     * 确认消息已读
+     *
+     * @param userId        用户ID
+     * @param messageIdList 消息ID列表
+     * @return 1 成功
+     */
     Integer acknowledge(Long userId, List<Long> messageIdList);
 }
