@@ -90,6 +90,7 @@ public class WsPushServer implements WsServer, WsPush {
     @Scheduled(fixedRate = REFRESH_TIME_MS)
     @Override
     public void refresh() {
+        log.info("refresh");
         if (sessionMap == null || sessionMap.isEmpty()) {
             return;
         }
@@ -112,6 +113,7 @@ public class WsPushServer implements WsServer, WsPush {
 
     @Override
     public void set(Long userId, WebSocketSession session) {
+        log.info("set userId: {}", userId);
         session.getAttributes().put(ATTR_WS_CONTEXT_EXPIRATION_TIME, System.currentTimeMillis() + TIMEOUT_UNIT.toMillis(TIMEOUT));
         sessionMap.put(userId, session);
         String address = webConfig.getCurrentServiceUrl().getServiceUrl();
@@ -121,6 +123,7 @@ public class WsPushServer implements WsServer, WsPush {
 
     @Override
     public void remove(Long userId) {
+        log.info("remove userId: {}", userId);
         sessionMap.remove(userId);
         redisTemplate.delete(CacheKey.WS_CONNECTION.getKey(userId));
     }
@@ -140,6 +143,7 @@ public class WsPushServer implements WsServer, WsPush {
 
     @Override
     public Integer push(Long userId, String message) {
+        log.info("push userId: {}, message: {}", userId, message);
         final int success = 0;
         final int unknow = 1;
         final int closed = 2;
