@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package gg.ws.connect.core.server;
+package gg.ws.connect.core.client;
 
 import org.springframework.web.socket.WebSocketSession;
 
@@ -22,14 +22,6 @@ import org.springframework.web.socket.WebSocketSession;
  * @author Zhong
  * @since 0.0.1
  */
-public interface WsContext {
-    void refresh();
-
-    void set(Long userId, WebSocketSession session);
-
-    WebSocketSession remove(Long userId);
-
-    void offline(Long userId);
-
-    void clear();
+public interface WsOnlineStrategy {
+    void handleWsOnline(Long userId, WebSocketSession session);
 }

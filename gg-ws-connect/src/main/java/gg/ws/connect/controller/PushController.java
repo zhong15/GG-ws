@@ -16,14 +16,12 @@
 
 package gg.ws.connect.controller;
 
+import gg.ws.connect.core.server.WsContext;
 import gg.ws.connect.core.server.WsPush;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
@@ -38,11 +36,20 @@ public class PushController {
 
     @Autowired
     private WsPush wsPush;
+    @Autowired
+    private WsContext wsContext;
 
     @PostMapping("/push")
     public Integer push(@RequestParam(name = "userId") Long userId,
                         @RequestParam(name = "message") String message) {
         log.info("push userId: {}, message: {}", userId, message);
         return wsPush.push(userId, message);
+    }
+
+    @PostMapping("/offline/{userId}")
+    public Integer offline(@PathVariable(name = "userId") Long userId) {
+        log.info("push userId: {}", userId);
+        wsContext.offline(userId);
+        return 1;
     }
 }

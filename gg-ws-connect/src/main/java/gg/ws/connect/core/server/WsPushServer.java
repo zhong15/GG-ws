@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -43,7 +44,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class WsPushServer implements WsServer, WsPush {
     private static final Logger log = LoggerFactory.getLogger(WsPushServer.class);
-
+    /**
+     * 连接状态冲突，有更新的用户连接上线
+     */
+    public static final CloseStatus CONFLICT = new CloseStatus(4001);
     /**
      * WS连接的过期时间，存储在 WebSocketSession attributes
      */
@@ -122,10 +126,24 @@ public class WsPushServer implements WsServer, WsPush {
     }
 
     @Override
-    public void remove(Long userId) {
+    public WebSocketSession remove(Long userId) {
         log.info("remove userId: {}", userId);
-        sessionMap.remove(userId);
+        WebSocketSession session = sessionMap.remove(userId);
         redisTemplate.delete(CacheKey.WS_CONNECTION.getKey(userId));
+        return session;
+    }
+
+    @Override
+    public void offline(Long userId) {
+        log.info("offline userId: {}", userId);
+        WebSocketSession session = remove(userId);
+        if (session != null && session.isOpen()) {
+            try {
+                session.close(CONFLICT);
+            } catch (IOException e) {
+                log.warn("offline error, userId: {}", userId);
+            }
+        }
     }
 
     @Override

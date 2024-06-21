@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gg.ws.common.message.model.Message;
 import gg.ws.connect.core.client.WsClient;
+import gg.ws.connect.core.client.WsOnlineStrategy;
 import gg.ws.connect.core.server.WsContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.ws.connect.core.server.WsPushServer.CONFLICT;
+
 /**
  * @author Zhong
  * @since 0.0.1
@@ -45,6 +48,8 @@ public class WsHandler extends //AbstractWebSocketHandler
     @Autowired
     private WsContext wsContext;
     @Autowired
+    private WsOnlineStrategy wsOnlineStrategy;
+    @Autowired
     private WsClient wsClient;
 
     @Override
@@ -52,6 +57,7 @@ public class WsHandler extends //AbstractWebSocketHandler
         log.info("afterConnectionEstablished sid: {}, uri: {}", session.getId(), session.getUri());
 
         long userId = (long) session.getAttributes().get(WsInterceptor.ATTR_KEY_USER_ID);
+        wsOnlineStrategy.handleWsOnline(userId, session);
         wsContext.set(userId, session);
         List<Message> messageList = wsClient.receive(userId);
         if (messageList != null && messageList.size() != 0) {
@@ -92,7 +98,10 @@ public class WsHandler extends //AbstractWebSocketHandler
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("afterConnectionClosed sid: {}", session.getId());
-
+        if (status == CONFLICT) {
+            // 服务端主动关闭
+            return;
+        }
         long userId = (long) session.getAttributes().get(WsInterceptor.ATTR_KEY_USER_ID);
         wsContext.remove(userId);
     }
