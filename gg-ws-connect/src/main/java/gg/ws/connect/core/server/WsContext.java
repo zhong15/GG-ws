@@ -28,4 +28,6 @@ public interface WsContext {
     void set(Long userId, WebSocketSession session);
 
     void remove(Long userId);
+
+    void clear();
 }

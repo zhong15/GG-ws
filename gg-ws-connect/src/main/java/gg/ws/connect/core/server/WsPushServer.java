@@ -84,12 +84,7 @@ public class WsPushServer implements WsServer, WsPush {
     @Override
     public void destroy() {
         log.info("destroy");
-        if (sessionMap == null || sessionMap.isEmpty()) {
-            return;
-        }
-        for (Long e : sessionMap.keySet()) {
-            remove(e);
-        }
+        clear();
     }
 
     @Scheduled(fixedRate = REFRESH_TIME_MS)
@@ -128,6 +123,19 @@ public class WsPushServer implements WsServer, WsPush {
     public void remove(Long userId) {
         sessionMap.remove(userId);
         redisTemplate.delete(CacheKey.WS_CONNECTION.getKey(userId));
+    }
+
+    @Override
+    public void clear() {
+        log.info("clear");
+        if (sessionMap == null || sessionMap.isEmpty()) {
+            return;
+        }
+        while (!sessionMap.isEmpty()) {
+            for (Long e : sessionMap.keySet()) {
+                remove(e);
+            }
+        }
     }
 
     @Override
