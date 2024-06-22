@@ -45,7 +45,9 @@ import java.util.concurrent.TimeUnit;
 public class WsPushServer implements WsServer, WsPush {
     private static final Logger log = LoggerFactory.getLogger(WsPushServer.class);
     /**
-     * 连接状态冲突，有更新的用户连接上线
+     * 连接状态冲突，有更新的用户连接上线<p>
+     * 参考文档：<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent">
+     *     https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent</a>
      */
     public static final CloseStatus CONFLICT = new CloseStatus(4001);
     /**
