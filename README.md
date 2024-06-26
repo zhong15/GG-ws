@@ -34,6 +34,7 @@ WebSocket
 - 支持前端连接上线时接收离线推送的消息
 - 支持通过缓存服务器（Redis）生成分布式 ID
 - 多节点同一个用户同一时间只能建立一个连接，用户上线后会剔除之前建立的连接
+- 支持缓存重启后刷入连接信息（提供接口：/refresh）
 
 ## 工程代码实现介绍
 
@@ -51,6 +52,8 @@ WebSocket
 连接服务
 
 - POST /push?userId=&message=
+  - Integer
+- POST /refresh
   - Integer
 
 ### gg-ws-push

@@ -50,4 +50,11 @@ public class ConnectController {
         wsContext.offline(userId);
         return 1;
     }
+
+    @PostMapping("/refresh")
+    public Integer refresh() {
+        log.info("refresh");
+        wsContext.refresh();
+        return 1;
+    }
 }
