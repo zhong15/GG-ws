@@ -100,17 +100,23 @@ public class WsPushServer implements WsServer, WsPush {
         if (sessionMap == null || sessionMap.isEmpty()) {
             return;
         }
+        String address = webConfig.getCurrentServiceUrl().getServiceUrl();
         final long currentTime = System.currentTimeMillis();
         for (Long e : sessionMap.keySet()) {
             WebSocketSession session = sessionMap.get(e);
             if (session == null || !session.isOpen()) {
+                log.info("连接已关闭");
                 sessionMap.remove(e, session);
                 redisTemplate.delete(CacheKey.WS_CONNECTION.getKey(e));
             } else {
                 long expirationTime = (long) session.getAttributes().get(ATTR_WS_CONTEXT_EXPIRATION_TIME);
                 // 这里采用 1.5 倍系数，防止 Cache 和 Java 出现 NPC 问题
                 if (expirationTime - currentTime <= 1.5 * REFRESH_TIME_MS) {
-                    redisTemplate.expire(CacheKey.WS_CONNECTION.getKey(e), TIMEOUT, TIMEOUT_UNIT);
+                    Boolean success = redisTemplate.expire(CacheKey.WS_CONNECTION.getKey(e), TIMEOUT, TIMEOUT_UNIT);
+                    if (success == null || !success) {
+                        log.info("缓存的连接信息已过期，延长活性失败，正在重新存储连接信息");
+                        redisTemplate.opsForValue().set(CacheKey.WS_CONNECTION.getKey(e), address, TIMEOUT, TIMEOUT_UNIT);
+                    }
                     session.getAttributes().put(ATTR_WS_CONTEXT_EXPIRATION_TIME, currentTime + TIMEOUT_UNIT.toMillis(TIMEOUT));
                 }
             }
