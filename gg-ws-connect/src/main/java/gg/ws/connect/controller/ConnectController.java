@@ -23,6 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Zhong
  * @since 0.0.1
@@ -36,6 +43,32 @@ public class ConnectController {
     private WsPush wsPush;
     @Autowired
     private WsContext wsContext;
+    /**
+     *
+     */
+    private ExecutorService refreshExecutorService;
+
+    @PostConstruct
+    public void init() {
+        log.info("init");
+        if (refreshExecutorService == null) {
+            log.info("init refreshExecutorService");
+            // 核心 0， 最大 1，存活时间 60s，默认抛弃最老的任务
+            refreshExecutorService = new ThreadPoolExecutor(0, 1,
+                    60L, TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<>(),
+                    new ThreadPoolExecutor.DiscardOldestPolicy());
+        }
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("destroy");
+        if (refreshExecutorService != null && !refreshExecutorService.isShutdown()) {
+            log.info("destroy refreshExecutorService");
+            refreshExecutorService.shutdown();
+        }
+    }
 
     @PostMapping("/push")
     public Integer push(@RequestParam(name = "userId") Long userId,
@@ -54,7 +87,11 @@ public class ConnectController {
     @PostMapping("/refresh")
     public Integer refresh() {
         log.info("refresh");
-        wsContext.refresh();
+        refreshExecutorService.execute(() -> {
+            log.info("开始 refresh");
+            wsContext.refresh();
+            log.info("结束 refresh");
+        });
         return 1;
     }
 }
