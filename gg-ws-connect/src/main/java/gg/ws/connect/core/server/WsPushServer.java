@@ -73,6 +73,10 @@ public class WsPushServer implements WsServer, WsPush {
     private StringRedisTemplate redisTemplate;
     @Autowired
     private WebConfig webConfig;
+    /**
+     * 当前是否有正在执行刷新
+     */
+    private volatile boolean isRefreshing;
 
     @PostConstruct
     public void init() {
@@ -96,6 +100,28 @@ public class WsPushServer implements WsServer, WsPush {
     @Scheduled(fixedRate = REFRESH_TIME_MS)
     @Override
     public void refresh() {
+        if (isRefreshing) {
+            log.info("当前正在执行刷新，已跳过");
+            return;
+        }
+        boolean doRefresh = false;
+        try {
+            synchronized (this) {
+                if (isRefreshing) {
+                    log.info("当前正在执行刷新，已跳过");
+                    return;
+                }
+                doRefresh = isRefreshing = true;
+            }
+            doRefresh();
+        } finally {
+            if (doRefresh) {
+                isRefreshing = false;
+            }
+        }
+    }
+
+    private void doRefresh() {
         log.info("refresh");
         if (sessionMap == null || sessionMap.isEmpty()) {
             return;
