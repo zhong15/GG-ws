@@ -44,7 +44,7 @@ public class ConnectController {
     @Autowired
     private WsContext wsContext;
     /**
-     *
+     * 刷新连接信息线程池
      */
     private ExecutorService refreshExecutorService;
 
