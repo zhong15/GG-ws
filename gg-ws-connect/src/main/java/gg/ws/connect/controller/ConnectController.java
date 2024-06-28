@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -47,6 +48,10 @@ public class ConnectController {
      * 刷新连接信息线程池
      */
     private ExecutorService refreshExecutorService;
+    /**
+     * 最后一次成功刷新连接信息的时间
+     */
+    private volatile Date lastSuccessRefreshDate;
 
     @PostConstruct
     public void init() {
@@ -85,13 +90,21 @@ public class ConnectController {
     }
 
     @PostMapping("/refresh")
-    public Integer refresh() {
+    public Date refresh() {
         log.info("refresh");
+        Date now = new Date();
         refreshExecutorService.execute(() -> {
             log.info("开始 refresh");
             wsContext.refresh();
+            lastSuccessRefreshDate = now;
             log.info("结束 refresh");
         });
-        return 1;
+        return now;
+    }
+
+    @GetMapping("/lastSuccessRefreshDate")
+    public Date lastSuccessRefreshDate() {
+        log.info("lastSuccessRefreshDate");
+        return lastSuccessRefreshDate;
     }
 }

@@ -54,7 +54,9 @@ WebSocket
 - POST /push?userId=&message=
   - Integer
 - POST /refresh
-  - Integer
+  - Date
+- GET /lastSuccessRefreshDate
+  - Date
 
 ### gg-ws-push
 推送服务
