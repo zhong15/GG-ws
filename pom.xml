@@ -28,7 +28,8 @@
 		<module>gg-ws-receive</module>
         <module>gg-ws-biz</module>
         <module>gg-ws-common</module>
-    </modules>
+		<module>gg-ws-netty</module>
+	</modules>
     <packaging>pom</packaging>
 
 	<properties>
