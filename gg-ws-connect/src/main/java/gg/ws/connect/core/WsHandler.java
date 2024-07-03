@@ -92,7 +92,6 @@ public class WsHandler extends //AbstractWebSocketHandler
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         log.info("handleTransportError sid: {}", session.getId());
-        super.handleTransportError(session, exception);
     }
 
     @Override
